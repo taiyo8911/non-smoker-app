@@ -1,7 +1,10 @@
 //
 //  DataView.swift
-//  NonSmoker
+//  non-smoker-app
 //
+//  Created by Taiyo KOSHIBA on 2025/04/23.
+//
+
 
 import SwiftUI
 

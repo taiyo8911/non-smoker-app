@@ -1,31 +1,33 @@
 //
 //  SmokingDataStore.swift
-//  NonSmoker
+//  non-smoker-app
+//
+//  Created by Taiyo KOSHIBA on 2025/04/23.
 //
 
 import Foundation
 import Combine
 
 // データの永続化を担当するクラス
-class SmokingDataStore {
+class SmokingDataStore: ObservableObject {
     // デフォルト値の定義
     private let defaultNumberPerDay = 10
     private let defaultPricePerBox = 600
     private let defaultNumberPerBox = 20
-    
+
     private let userDefaults = UserDefaults.standard
-    
+
     // シングルトンインスタンス
     static let shared = SmokingDataStore()
-    
-    private init() {}
-    
+
     // 設定が完了しているかどうか
-    var isSettingCompleted: Bool {
-        get { userDefaults.bool(forKey: "isSettingCompleted") }
-        set { userDefaults.set(newValue, forKey: "isSettingCompleted") }
+    @Published var isSettingCompleted: Bool
+
+    // 初期化メソッド - シングルトンパターンなので1つだけ定義
+    private init() {
+        self.isSettingCompleted = userDefaults.bool(forKey: "isSettingCompleted")
     }
-    
+
     // SmokingDataを取得する
     func getSmokingData() -> SmokingData {
         let startComponents = DateComponents(
@@ -36,12 +38,12 @@ class SmokingDataStore {
             minute: userDefaults.integer(forKey: "startMinute"),
             second: userDefaults.integer(forKey: "startSecond")
         )
-        
+
         let startDate = Calendar.current.date(from: startComponents) ?? Date()
         let numberPerDay = userDefaults.integer(forKey: "numberPerDay")
-        let pricePerBox = userDefaults.integer(forKey: "pricePerBox") 
+        let pricePerBox = userDefaults.integer(forKey: "pricePerBox")
         let numberPerBox = userDefaults.integer(forKey: "numberPerBox")
-        
+
         return SmokingData(
             startDate: startDate,
             numberPerDay: numberPerDay,
@@ -49,7 +51,12 @@ class SmokingDataStore {
             numberPerBox: numberPerBox
         )
     }
-    
+
+    // UserDefaultsに設定を保存するメソッド
+    func saveIsSettingCompleted() {
+        userDefaults.set(isSettingCompleted, forKey: "isSettingCompleted")
+    }
+
     // 禁煙開始日を保存する
     func saveStartDate(date: Date) {
         let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
@@ -60,24 +67,24 @@ class SmokingDataStore {
         userDefaults.set(components.minute, forKey: "startMinute")
         userDefaults.set(0, forKey: "startSecond")
     }
-    
+
     // 喫煙データを保存する
     func saveSmokeSettings(numberPerDay: Int, pricePerBox: Int, numberPerBox: Int) {
         userDefaults.set(numberPerDay, forKey: "numberPerDay")
         userDefaults.set(pricePerBox, forKey: "pricePerBox")
         userDefaults.set(numberPerBox, forKey: "numberPerBox")
     }
-    
+
     // 設定をリセットする
     func resetSettings() {
         let appDomain = Bundle.main.bundleIdentifier
         userDefaults.removePersistentDomain(forName: appDomain!)
-        
+
         // デフォルト値を再設定する
         userDefaults.set(defaultNumberPerDay, forKey: "numberPerDay")
         userDefaults.set(defaultPricePerBox, forKey: "pricePerBox")
         userDefaults.set(defaultNumberPerBox, forKey: "numberPerBox")
-        
+
         let currentDate = Date()
         let calendar = Calendar.current
         userDefaults.set(calendar.component(.year, from: currentDate), forKey: "startYear")
@@ -86,7 +93,9 @@ class SmokingDataStore {
         userDefaults.set(calendar.component(.hour, from: currentDate), forKey: "startHour")
         userDefaults.set(calendar.component(.minute, from: currentDate), forKey: "startMinute")
         userDefaults.set(0, forKey: "startSecond")
-        
+
+        // 設定完了フラグを更新
         isSettingCompleted = false
+        saveIsSettingCompleted()
     }
 }

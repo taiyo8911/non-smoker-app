@@ -1,6 +1,8 @@
 //
 //  MainView.swift
-//  NonSmoker
+//  non-smoker-app
+//
+//  Created by Taiyo KOSHIBA on 2025/04/23.
 //
 
 import SwiftUI
@@ -39,7 +41,7 @@ struct MainView: View {
                     MessageView()
                         .foregroundColor(Color.white)
                         .font(.title)
-                        .fontWeight(.bold)
+//                        .fontWeight(.bold)
                         .padding()
                     
                     // 詳細データ
