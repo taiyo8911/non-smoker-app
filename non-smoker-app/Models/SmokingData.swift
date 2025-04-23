@@ -28,6 +28,7 @@ struct SmokingData {
 
     // 禁煙本数を計算する
     func nonSmokingCount() -> Int {
+        guard numberPerDay > 0 else { return 0 }
         let days = Calendar.current.dateComponents([.day], from: startDate, to: Date()).day ?? 0
         return numberPerDay * days
     }
