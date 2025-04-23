@@ -26,4 +26,4 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-// test
+// testです。
